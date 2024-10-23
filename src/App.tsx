@@ -1,12 +1,14 @@
 import Pages from "pages";
 import ErrorBoundary from "components/HOC/ErrorBoundary";
-import "react-toastify/dist/ReactToastify.css";
-import "./App.css";
+import "./index.css";
+import { AuthProvider } from "./context/AuthContext";
 
 const App = () => {
   return (
     <ErrorBoundary>
-      <Pages />
+      <AuthProvider>
+        <Pages />
+      </AuthProvider>
     </ErrorBoundary>
   );
 };
