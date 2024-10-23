@@ -1,7 +1,7 @@
-// src/components/Navbar.tsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaUserCircle, FaAddressBook, FaSignInAlt } from "react-icons/fa";
+import { PUBLIC_PATHS } from "../routes/pagePaths";
 
 const Navbar: React.FC = () => {
   return (
@@ -14,14 +14,14 @@ const Navbar: React.FC = () => {
       <nav className="flex items-center space-x-4 md:space-x-6">
         <Link
           className="flex items-center text-sm md:text-base hover:underline hover:text-[#FFA500] transition duration-300 ease-in-out"
-          to="/login"
+          to={PUBLIC_PATHS.LOGIN}
         >
           <span className="mr-1">Login</span>
           <FaSignInAlt />
         </Link>
         <Link
           className="flex items-center text-sm md:text-base hover:underline hover:text-[#FFA500] transition duration-300 ease-in-out"
-          to="/signup"
+          to={PUBLIC_PATHS.SIGNUP}
         >
           <span className="mr-1">Signup</span>
           <FaUserCircle />
