@@ -1,6 +1,6 @@
 # Contact Keeper
 
-**Demo Link**: [Access Contact Keeper Here](https://google.com)
+**Demo Link**: [Access Contact Keeper Here](https://knightcontactkeeper.netlify.app/)
 
 ## Table of Contents
 
@@ -17,10 +17,6 @@
 ## About The App
 
 Contact Keeper is a simple web application that helps users manage and organize their personal and professional contacts. It allows users to add, edit, delete, and view contacts. The app offers a secure signup and login feature, enabling users to keep their contacts safe. Contact Keeper is designed to be user-friendly, visually appealing, and responsive across all devices.
-
-## Screenshots
-
-- Upcoming
 
 ## Technologies
 
