@@ -3,15 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaUserPlus } from "react-icons/fa";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
-import { PUBLIC_PATHS, PROTECTED_PATHS } from "../routes/pagePaths";
+import { PUBLIC_PATHS } from "../routes/pagePaths";
+import { useAuth } from "context/AuthContext";
+import { useSignupMutation } from "services/api/auth";
 
 const SignupPage: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const { login } = useAuth();
   const navigate = useNavigate();
+  const mutation = useSignupMutation(login, navigate);
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,13 +25,7 @@ const SignupPage: React.FC = () => {
       return;
     }
 
-    // Simulated signup logic - replace with actual API request
-    if (email === "test@example.com") {
-      toast.error("Email is already in use. Please try another.");
-    } else {
-      toast.success("Account created successfully!");
-      navigate(PROTECTED_PATHS.CONTACTS); // Redirect to contacts page on successful signup
-    }
+    mutation.mutate({ name, email, password });
   };
 
   return (
@@ -100,7 +97,7 @@ const SignupPage: React.FC = () => {
               type="submit"
               className="w-full bg-[#003699] text-white p-3 rounded hover:bg-[#002b80] transition duration-300"
             >
-              Register
+              {mutation.isPending ? "Registering..." : "Register"}
             </button>
           </form>
 
