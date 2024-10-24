@@ -1,29 +1,23 @@
-// src/pages/LoginPage.tsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
-import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
-import { PUBLIC_PATHS, PROTECTED_PATHS } from "../routes/pagePaths";
+import { PUBLIC_PATHS } from "../routes/pagePaths";
+import { useAuth } from "context/AuthContext";
+import { useLoginMutation } from "services/api/auth";
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const { login } = useAuth();
   const navigate = useNavigate();
+
+  // Use the login mutation hook
+  const mutation = useLoginMutation(login, navigate);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Simulated login logic - replace with actual API request
-    if (email === "test@example.com" && password === "password123") {
-      toast.success("Successfully logged in!");
-      navigate(PROTECTED_PATHS.CONTACTS); // Redirect to contacts page on successful login
-    } else {
-      console.log("show error message");
-
-      toast.error("Invalid email or password. Please try again.");
-    }
+    mutation.mutate({ email, password });
   };
 
   return (
@@ -66,7 +60,7 @@ const LoginPage: React.FC = () => {
               type="submit"
               className="w-full bg-[#003699] text-white p-3 rounded hover:bg-[#002b80] transition duration-300"
             >
-              Login
+              {mutation.isPending ? "Logging in..." : "Login"}
             </button>
           </form>
 

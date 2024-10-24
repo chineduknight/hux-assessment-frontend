@@ -1,22 +1,48 @@
-import { createContext, useState, useContext, ReactNode } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { TOKEN_KEY, USER_KEY } from "utils/constants";
+
+export interface User {
+  name: string;
+  email: string;
+}
 
 interface AuthContextType {
-  user: string | null;
-  login: (username: string) => void;
-  logout: () => void;
+  user: User | null;
+  login: (user: User, token: string) => void;
+  logout: (navigate: ReturnType<typeof useNavigate>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const login = (username: string) => {
-    setUser(username);
+  // Load user from localStorage when the app initializes
+  useEffect(() => {
+    const storedUser = localStorage.getItem(USER_KEY);
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const login = (user: User, token: string) => {
+    setUser(user);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.setItem(TOKEN_KEY, token);
   };
 
-  const logout = () => {
+  const logout = (navigate: ReturnType<typeof useNavigate>) => {
     setUser(null);
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+    navigate("/");
   };
 
   return (
