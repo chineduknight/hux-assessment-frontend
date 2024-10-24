@@ -4,7 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import Navbar from "../components/Navbar";
 import { PUBLIC_PATHS } from "../routes/pagePaths";
 import { useAuth } from "context/AuthContext";
-import { useLoginMutation } from "services/api/auth";
+import { useLoginMutation } from "services/api/hooks/auth";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");

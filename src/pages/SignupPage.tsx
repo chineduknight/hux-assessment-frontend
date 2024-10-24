@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
 import { PUBLIC_PATHS } from "../routes/pagePaths";
 import { useAuth } from "context/AuthContext";
-import { useSignupMutation } from "services/api/auth";
+import { useSignupMutation } from "services/api/hooks/auth";
 
 const SignupPage: React.FC = () => {
   const [name, setName] = useState("");

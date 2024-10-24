@@ -2,7 +2,7 @@ import { Contact } from "pages/ContactsPage";
 
 export const dummyContacts: Contact[] = [
   {
-    id: 1,
+    _id: "1",
     firstName: "Jeff",
     lastName: "Jackson",
     email: "jeff@gmail.com",
@@ -12,7 +12,7 @@ export const dummyContacts: Contact[] = [
     notes: "This is a note",
   },
   {
-    id: 2,
+    _id: "2",
     firstName: "Jen",
     lastName: "Johnson",
     email: "jen@yahoo.com",
@@ -22,7 +22,7 @@ export const dummyContacts: Contact[] = [
     notes: "This is another note",
   },
   {
-    id: 3,
+    _id: "3",
     firstName: "Kevin",
     lastName: "Williams",
     email: "kevin@gmail.com",

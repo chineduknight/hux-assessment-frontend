@@ -4,6 +4,7 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from "axios";
+import { TOKEN_KEY } from "utils/constants";
 
 export const baseURL = process.env.REACT_APP_BASE_URL;
 export * from "./request";
@@ -20,7 +21,8 @@ const axiosInstance: AxiosInstance = axios.create({
 // This adds a token before all the requests.
 // https://stackoverflow.com/questions/57251719/acquiring-a-new-token-with-axios-interceptors
 const onRequest = (request: AxiosRequestConfig): any => {
-  request.headers!.Authorization = localStorage.getItem("key-here") || "";
+  const token = localStorage.getItem(TOKEN_KEY);
+  request.headers!.Authorization = `Bearer ${token}`;
   return request;
 };
 
