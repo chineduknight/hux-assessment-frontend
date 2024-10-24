@@ -18,11 +18,11 @@ const PROTECTED_ROUTES = [
   { path: CONTACTS, element: <ContactsPage /> },
   {
     path: `${PROTECTED_PATHS.CONTACTS}/add`,
-    element: <AddContactPage onAddContact={() => console.log()} />,
+    element: <AddContactPage />,
   },
   {
     path: `${PROTECTED_PATHS.CONTACTS}/:id/edit`,
-    element: <EditContactPage onEditContact={() => console.log("asdfa")} />,
+    element: <EditContactPage />,
   },
   { path: "/", element: <Navigate to={CONTACTS} /> },
   ...Object.values(PUBLIC_PATHS).map((route) => {

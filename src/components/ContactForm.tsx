@@ -12,7 +12,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
-  const [contactData, setContactData] = useState<Omit<Contact, "id">>({
+  const [contactData, setContactData] = useState<Omit<Contact, "_id">>({
     firstName: "",
     lastName: "",
     email: "",
@@ -40,7 +40,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ ...contactData, id: initialData?.id || 0 });
+    onSubmit({ ...contactData, _id: initialData?._id || "0" });
   };
 
   return (

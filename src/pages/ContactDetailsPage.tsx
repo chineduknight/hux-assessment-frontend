@@ -1,7 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { dummyContacts } from "../data/contactsData";
 import {
   FaEnvelope,
   FaPhone,
@@ -11,22 +10,32 @@ import {
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import {
+  useFetchContactByIdQuery,
+  useDeleteContactMutation,
+} from "services/api/hooks/useContacts";
+import { PROTECTED_PATHS } from "routes/pagePaths";
 
 const ContactDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const contact = dummyContacts.find((c) => c.id === parseInt(id || "", 10));
+  // Fetch contact by ID
+  const {
+    data: contact,
+    isLoading,
+    isError,
+  } = useFetchContactByIdQuery(id || "");
 
-  if (!contact) {
-    return <p>Contact not found</p>;
-  }
+  // Delete contact mutation
+  const deleteMutation = useDeleteContactMutation();
 
+  // Handle edit
   const handleEdit = () => {
-    // Assuming there is a mechanism to navigate to edit mode, perhaps setting a state or navigating to an edit form.
-    navigate(`/contacts/${contact.id}/edit`); // Update according to your navigation structure
+    navigate(`/contacts/${contact?._id}/edit`);
   };
 
+  // Handle delete with confirmation
   const handleDelete = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -38,13 +47,28 @@ const ContactDetailsPage: React.FC = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        // Ideally, delete from server or state. Here we are just showing the toast as an example.
-        toast.success("Contact Deleted");
-        Swal.fire("Deleted!", "Your contact has been deleted.", "success");
-        navigate("/contacts"); // Redirect back to contact list
+        deleteMutation.mutate(id || "", {
+          onSuccess: () => {
+            Swal.fire("Deleted!", "Your contact has been deleted.", "success");
+            navigate(PROTECTED_PATHS.CONTACTS);
+          },
+          onError: () => {
+            toast.error("Failed to delete contact.");
+          },
+        });
       }
     });
   };
+
+  // Handle loading state
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  // Handle contact not found or error
+  if (isError || !contact) {
+    return <div>Contact not found</div>;
+  }
 
   return (
     <>

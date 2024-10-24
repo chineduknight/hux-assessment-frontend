@@ -6,8 +6,8 @@ import { AxiosError, AxiosRequestConfig } from "axios";
 // added this disable here to avoid having to add an empty request object in the useApiMutation function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface MutationParams<T> {
-  method: "POST" | "PUT" | "DELETE" | "PATCH"; // Specify allowed HTTP methods
-  endpoint: string;
+  method: "POST" | "PUT" | "DELETE" | "PATCH"; // HTTP methods
+  endpoint: string | ((data: T) => string);
   onSuccessCallback: (data: any) => void;
   onErrorCallback?: (error: AxiosError) => void;
 }
@@ -50,22 +50,25 @@ export const useApiMutation = <T = any>({
 }: MutationParams<T>) => {
   return useMutation({
     mutationFn: async (requestData: T) => {
+      const url =
+        typeof endpoint === "function" ? endpoint(requestData) : endpoint;
       const config: AxiosRequestConfig = {
         method,
-        url: endpoint,
-        data: requestData,
+        url,
+        ...(method !== "DELETE" && { data: requestData }),
       };
+      console.log("config:", config);
       return axiosInstance(config);
     },
     onSuccess: (data) => {
       onSuccessCallback(data);
     },
     onError: (error: AxiosError) => {
+      if (onErrorCallback) {
+        return onErrorCallback(error);
+      }
       const errorMsg = (error.response?.data as { error: string }).error;
       toast.error(errorMsg || "Something went wrong. Please try again.");
-      if (onErrorCallback) {
-        onErrorCallback(error);
-      }
     },
   });
 };

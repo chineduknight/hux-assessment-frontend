@@ -15,9 +15,6 @@ const EditContact: React.FC<EditContactProps> = ({
 }) => {
   return (
     <div className="edit-contact bg-white rounded-lg p-8 shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6 text-[#003699]">
-        Edit Contact
-      </h2>
       <ContactForm
         initialData={initialData}
         onSubmit={onSave}

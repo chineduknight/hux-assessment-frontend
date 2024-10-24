@@ -2,42 +2,71 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import EditContact from "../components/EditContact";
-import { dummyContacts } from "../data/contactsData";
 import { Contact } from "./ContactsPage";
 import { toast } from "react-toastify";
+import {
+  useFetchContactByIdQuery,
+  useEditContactMutation,
+} from "services/api/hooks/useContacts";
+import { PROTECTED_PATHS } from "routes/pagePaths";
 
-interface EditContactPageProps {
-  onEditContact: (updatedContact: Omit<Contact, "id">, id: number) => void;
-}
-
-const EditContactPage: React.FC<EditContactPageProps> = ({ onEditContact }) => {
-  const { id } = useParams<{ id: string }>();
+const EditContactPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>(); // Extract ID from URL
   const navigate = useNavigate();
 
-  const contactToEdit = dummyContacts.find(
-    (c) => c.id === parseInt(id || "", 10)
-  );
+  // Fetch contact by ID
+  const {
+    data: contactToEdit,
+    isError,
+    isLoading,
+  } = useFetchContactByIdQuery(id || "");
 
-  if (!contactToEdit) {
-    return <p>Contact not found</p>;
-  }
+  // Edit contact mutation
+  const editMutation = useEditContactMutation();
 
-  const handleSave = (updatedContact: Omit<Contact, "id">) => {
-    onEditContact(updatedContact, contactToEdit.id);
-    toast.success("Contact updated successfully!");
-    navigate("/contacts");
+  const handleSave = (updatedContact: Contact) => {
+    if (id) {
+      editMutation.mutate(updatedContact, {
+        onSuccess: () => {
+          toast.success("Contact updated successfully!");
+          navigate(PROTECTED_PATHS.CONTACTS);
+        },
+      });
+    }
   };
+  // If ID is invalid or contact not found
+  if (isError) {
+    return (
+      <div>
+        <Navbar />
+        <div className="container max-w-screen-md mx-auto p-4">
+          <h2 className="text-3xl font-bold text-[#003699] mb-6">
+            Contact Not Found
+          </h2>
+          <button onClick={() => navigate(PROTECTED_PATHS.CONTACTS)}>
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
       <Navbar />
       <div className="container max-w-screen-md mx-auto p-4">
         <h2 className="text-3xl font-bold text-[#003699] mb-6">Edit Contact</h2>
-        <EditContact
-          initialData={contactToEdit}
-          onSave={handleSave}
-          onCancel={() => navigate("/contacts")}
-        />
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          contactToEdit && (
+            <EditContact
+              initialData={contactToEdit}
+              onSave={handleSave}
+              onCancel={() => navigate(PROTECTED_PATHS.CONTACTS)}
+            />
+          )
+        )}
       </div>
     </>
   );

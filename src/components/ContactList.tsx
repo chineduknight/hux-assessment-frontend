@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 interface ContactListProps {
   contacts: Contact[];
   onEdit: (contact: Contact) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 const ContactList: React.FC<ContactListProps> = ({
@@ -19,7 +19,7 @@ const ContactList: React.FC<ContactListProps> = ({
       {contacts.length > 0 ? (
         contacts.map((contact) => (
           <div
-            key={contact.id}
+            key={contact._id}
             className="border p-4 rounded shadow-md flex flex-col justify-between hover:shadow-lg transition"
           >
             <div>
@@ -51,7 +51,7 @@ const ContactList: React.FC<ContactListProps> = ({
             </div>
             <div className="mt-4 flex justify-end space-x-3">
               <Link
-                to={`/contacts/${contact.id}`}
+                to={`/contacts/${contact._id}`}
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
               >
                 View Details
@@ -64,7 +64,7 @@ const ContactList: React.FC<ContactListProps> = ({
               </button>
               <button
                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                onClick={() => onDelete(contact.id)}
+                onClick={() => onDelete(contact._id)}
               >
                 Delete
               </button>

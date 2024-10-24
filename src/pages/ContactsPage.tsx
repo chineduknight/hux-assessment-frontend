@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { dummyContacts } from "../data/contactsData";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import ContactList from "components/ContactList";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import {
+  useDeleteContactMutation,
+  useFetchContactsQuery,
+} from "services/api/hooks/useContacts";
 
 export interface Contact {
-  id: number;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -19,18 +22,30 @@ export interface Contact {
 }
 
 const ContactsPage: React.FC = () => {
-  const [contacts, setContacts] = useState<Contact[]>(dummyContacts);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
+  const {
+    data: contacts = [],
+    isLoading,
+    isError,
+    error,
+  } = useFetchContactsQuery();
+  const deleteMutation = useDeleteContactMutation();
 
+  if (isError) {
+    const errorMsg =
+      (error as any)?.response?.data?.error || "Failed to fetch contacts";
+    toast.error(errorMsg);
+  }
   // Filtering contacts based on search term
-  const filteredContacts = contacts.filter((contact) =>
+  const filteredContacts = contacts.filter((contact: any) =>
     `${contact.firstName} ${contact.lastName}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteContact = (id: number) => {
+  const handleDeleteContact = (id: string) => {
+    console.log("id:", id);
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -41,9 +56,11 @@ const ContactsPage: React.FC = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setContacts((prev) => prev.filter((contact) => contact.id !== id));
-        toast.success("Contact Deleted");
-        Swal.fire("Deleted!", "Your contact has been deleted.", "success");
+        deleteMutation.mutate(id);
+        if (deleteMutation.isSuccess) {
+          toast.success("Contact Deleted");
+          Swal.fire("Deleted!", "Your contact has been deleted.", "success");
+        }
       }
     });
   };
@@ -78,11 +95,15 @@ const ContactsPage: React.FC = () => {
         </div>
 
         {/* Contact List */}
-        <ContactList
-          contacts={filteredContacts}
-          onEdit={(contact) => navigate(`/contacts/${contact.id}/edit`)}
-          onDelete={handleDeleteContact}
-        />
+        {isLoading ? (
+          <p>Loading contacts...</p>
+        ) : (
+          <ContactList
+            contacts={filteredContacts}
+            onEdit={(contact) => navigate(`/contacts/${contact._id}/edit`)}
+            onDelete={handleDeleteContact}
+          />
+        )}
       </div>
     </>
   );
